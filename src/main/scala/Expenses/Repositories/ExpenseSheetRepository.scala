@@ -8,3 +8,8 @@ trait ExpenseSheetRepository[F[_]] {
   def get(id: ExpenseSheetId) : F[ApplicationResult[ExpenseSheet]]
   def save(expenseSheet: ExpenseSheet) : F[ApplicationResult[Unit]]
 }
+
+trait ExpenseSheetRepositoryME[F[_]] {
+  def get(id: ExpenseSheetId) : F[ExpenseSheet]
+  def save(expenseSheet: ExpenseSheet) : F[Unit]
+}
