@@ -2,9 +2,9 @@ package Infrastructure.Doobie
 
 import Expenses.Model.Employee
 import Expenses.Model.Employee.EmployeeId
-import Expenses.Repositories.{EmployeeRepository, EmployeeRepositoryME}
-import Infrastructure.Repositories.DoobieEmployeeRepositoryME
-import Infrastructure.{EmployeeRepositoryContractTest, EmployeeRepositoryMEContractTest}
+import Expenses.Repositories.EmployeeRepository
+import Infrastructure.EmployeeRepositoryContractTest
+import Infrastructure.Repositories.DoobieEmployeeRepository
 import cats.effect.IO
 import doobie.free.connection.ConnectionIO
 import doobie.implicits._
@@ -12,24 +12,7 @@ import doobie.postgres.implicits._
 import doobie.util.transactor.Transactor
 import doobie.util.transactor.Transactor.Aux
 
-class DoobieEmployeeRepositoryTest extends EmployeeRepositoryContractTest[ConnectionIO] with BaseDoobieTest {
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    setUpDatabase()
-  }
-
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-    cleanUpDatabase()
-  }
-
-  override def createRepositoryWith(employees: List[Employee]): EmployeeRepository[ConnectionIO] =
-    createRepositoriesWith(List(), employees)._2
-
-  override def cleanUp(employeeIds: List[EmployeeId]): Unit = cleanUp(List(), employeeIds)
-}
-
-class DoobieEmployeeRepositoryMETest extends EmployeeRepositoryMEContractTest[ConnectionIO] {
+class DoobieEmployeeRepositoryTest extends EmployeeRepositoryContractTest[ConnectionIO] {
   implicit var xa: Aux[IO, Unit] = _
   var employeeIds: List[EmployeeId] = _
 
@@ -51,8 +34,8 @@ class DoobieEmployeeRepositoryMETest extends EmployeeRepositoryMEContractTest[Co
     cleanUp(employeeIds)
   }
 
-  override def createRepositoryWith(employees: List[Employee]): EmployeeRepositoryME[ConnectionIO] = {
-    val employeeRepository = new DoobieEmployeeRepositoryME
+  override def createRepositoryWith(employees: List[Employee]): EmployeeRepository[ConnectionIO] = {
+    val employeeRepository = new DoobieEmployeeRepository
 
     employeeIds = employees.map(_.id)
     employees

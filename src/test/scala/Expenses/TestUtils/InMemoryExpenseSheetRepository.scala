@@ -1,41 +1,16 @@
 package Expenses.TestUtils
 
-import Expenses.Model.{Employee, ExpenseSheet}
+import Expenses.Model.ExpenseSheet
 import Expenses.Model.ExpenseSheet.ExpenseSheetId
-import Expenses.Repositories.{ExpenseSheetRepository, ExpenseSheetRepositoryME}
-import Expenses.TestUtils.AcceptanceTestUtils.{OrError, Test, TestME, TestState}
-import Expenses.Utils.ErrorManagement.ApplicationResult
-import Expenses.Utils.ErrorManagement.implicits._
+import Expenses.Repositories.ExpenseSheetRepository
+import Expenses.TestUtils.AcceptanceTestUtils.{OrError, Test, TestState}
+import cats.data.StateT
 import cats.data.StateT.{liftF, modify, pure}
-import cats.data.{NonEmptyList, State, StateT}
 import cats.implicits._
 
 class InMemoryExpenseSheetRepository extends ExpenseSheetRepository[Test]{
 
-  override def get(id: ExpenseSheetId): Test[ApplicationResult[ExpenseSheet]] =
-    State.get.map(_.expenseSheets.find(_.id == id).orError(s"Unable to find expense sheet $id"))
-
-  override def save(expenseSheet: ExpenseSheet): Test[ApplicationResult[Unit]] = {
-    State {
-      state => {
-        if (!state.employees.exists(_.id == expenseSheet.employee.id))
-          (state, Left(NonEmptyList(s"Unable to find employee ${expenseSheet.employee.id}", List())))
-        else {
-          val idx = state.expenseSheets.indexWhere(x => x.id == expenseSheet.id)
-
-          if (idx == -1)
-            (state.copy(expenseSheets = expenseSheet :: state.expenseSheets), Right(()))
-          else
-            (state.copy(expenseSheets = state.expenseSheets.patch(idx, Seq(expenseSheet), 1)), Right(()))
-        }
-      }
-    }
-  }
-}
-
-class InMemoryExpenseSheetRepositoryME extends ExpenseSheetRepositoryME[TestME]{
-
-  override def get(id: ExpenseSheetId): TestME[ExpenseSheet] =
+  override def get(id: ExpenseSheetId): Test[ExpenseSheet] =
     for {
       state <- StateT.get[OrError, TestState]
       result <- state.expenseSheets.find(_.id == id) match {
@@ -44,7 +19,7 @@ class InMemoryExpenseSheetRepositoryME extends ExpenseSheetRepositoryME[TestME]{
       }
     } yield result
 
-  override def save(expenseSheet: ExpenseSheet): TestME[Unit] =
+  override def save(expenseSheet: ExpenseSheet): Test[Unit] =
     for {
       state <- StateT.get[OrError, TestState]
       _ <- if(!state.employees.exists(_.id == expenseSheet.employee.id))

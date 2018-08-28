@@ -4,7 +4,7 @@ import java.util.UUID
 
 import Expenses.Model.ExpenseSheet.ExpenseSheetId
 import Expenses.Utils.ErrorManagement
-import Expenses.Utils.ErrorManagement.ValidationResult
+import Expenses.Utils.ErrorManagement.Validated
 import cats.implicits._
 
 sealed trait ExpenseSheet {
@@ -27,19 +27,19 @@ object ExpenseSheet {
   private val validateId = ErrorManagement.notNull[ExpenseSheetId]("id is null")(_)
   private val validateEmployee = ErrorManagement.notNull[Employee]("employee is null")(_)
 
-  def createOpen(id: ExpenseSheetId, employee: Employee, expenses:List[Expense]) : ValidationResult[OpenExpenseSheet] =
+  def createOpen(id: ExpenseSheetId, employee: Employee, expenses:List[Expense]) : Validated[OpenExpenseSheet] =
     (validateId(id), validateEmployee(employee))
       .mapN(OpenExpenseSheet(_, _, expenses))
 
-  def createOpen(employee: Employee, expenses:List[Expense]) : ValidationResult[OpenExpenseSheet] =
+  def createOpen(employee: Employee, expenses:List[Expense]) : Validated[OpenExpenseSheet] =
     createOpen(UUID.randomUUID(), employee, expenses)
 
   private val validateExpenses = ErrorManagement.nonEmptyList[Expense]("expenses is empty")(_)
 
-  def createClaimed(id: ExpenseSheetId, employee: Employee, expenses:List[Expense]) : ValidationResult[ClaimedExpenseSheet] =
+  def createClaimed(id: ExpenseSheetId, employee: Employee, expenses:List[Expense]) : Validated[ClaimedExpenseSheet] =
     (validateId(id), validateEmployee(employee), validateExpenses(expenses))
       .mapN(ClaimedExpenseSheet)
 
-  def createClaimed(employee: Employee, expenses:List[Expense]) : ValidationResult[ClaimedExpenseSheet] =
+  def createClaimed(employee: Employee, expenses:List[Expense]) : Validated[ClaimedExpenseSheet] =
     createClaimed(UUID.randomUUID(), employee, expenses)
 }
