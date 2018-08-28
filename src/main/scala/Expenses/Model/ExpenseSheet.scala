@@ -13,11 +13,11 @@ sealed trait ExpenseSheet {
   def expenses: List[Expense]
 }
 
-case class OpenExpenseSheet (id: ExpenseSheetId,
+case class OpenExpenseSheet private (id: ExpenseSheetId,
                              employee: Employee,
                              expenses:List[Expense]) extends ExpenseSheet
 
-case class ClaimedExpenseSheet (id: ExpenseSheetId,
+case class ClaimedExpenseSheet private (id: ExpenseSheetId,
                                 employee: Employee,
                                 expenses:List[Expense]) extends ExpenseSheet
 

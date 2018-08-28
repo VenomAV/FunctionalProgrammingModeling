@@ -1,6 +1,6 @@
 package Expenses.Model
 
-import java.util.Date
+import java.util.{Date, UUID}
 
 import cats.data.NonEmptyList
 import cats.data.Validated.{Invalid, Valid}

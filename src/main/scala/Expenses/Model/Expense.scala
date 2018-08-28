@@ -13,13 +13,13 @@ sealed trait Expense {
   def date: Date
 }
 
-case class TravelExpense(cost: Money, date: Date, from: String, to: String) extends Expense
+case class TravelExpense private (cost: Money, date: Date, from: String, to: String) extends Expense
 
-case class FoodExpense(cost: Money, date: Date) extends Expense
+case class FoodExpense private (cost: Money, date: Date) extends Expense
 
-case class AccommodationExpense(cost: Money, date: Date, hotel: String) extends Expense
+case class AccommodationExpense private (cost: Money, date: Date, hotel: String) extends Expense
 
-case class OtherExpense(cost: Money, date: Date, description: String) extends Expense
+case class OtherExpense private (cost: Money, date: Date, description: String) extends Expense
 
 object Expense {
   private val validateDate =

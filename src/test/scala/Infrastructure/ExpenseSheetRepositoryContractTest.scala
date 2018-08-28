@@ -6,6 +6,7 @@ import Expenses.Model.ExpenseSheet.ExpenseSheetId
 import Expenses.Model._
 import Expenses.Repositories.ExpenseSheetRepository
 import cats.Monad
+import cats.data.NonEmptyList
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import org.scalatest.{BeforeAndAfterEach, FunSpec, Matchers}
@@ -24,7 +25,7 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit M:Monad[F])
       val sut = createRepositoryWith(List(OpenExpenseSheet(id, employee, List())), List(employee))
 
       run(sut.get(id)) should matchPattern {
-        case Some(OpenExpenseSheet(`id`, `employee`, List())) =>
+        case Right(OpenExpenseSheet(`id`, `employee`, List())) =>
       }
     }
     it("should retrieve existing open expense sheet w/ expenses") {
@@ -38,7 +39,7 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit M:Monad[F])
       val sut = createRepositoryWith(List(OpenExpenseSheet(id, employee, expenses)), List(employee))
 
       run(sut.get(id)) should matchPattern {
-        case Some(OpenExpenseSheet(`id`, `employee`, `expenses`)) =>
+        case Right(OpenExpenseSheet(`id`, `employee`, `expenses`)) =>
       }
     }
     it("should retrieve existing claimed expense sheet") {
@@ -49,8 +50,14 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit M:Monad[F])
       val sut = createRepositoryWith(List(ClaimedExpenseSheet(id, employee, expenses)), List(employee))
 
       run(sut.get(id)) should matchPattern {
-        case Some(ClaimedExpenseSheet(`id`, `employee`, `expenses`)) =>
+        case Right(ClaimedExpenseSheet(`id`, `employee`, `expenses`)) =>
       }
+    }
+    it("should return left when get a missing expense sheet") {
+      val id = UUID.randomUUID()
+      val sut = createRepositoryWith(List(), List())
+
+      run(sut.get(id)) should be(Left(NonEmptyList.of(s"Unable to find expense sheet $id")))
     }
   }
   describe("save") {
@@ -71,10 +78,13 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit M:Monad[F])
       val sut = createRepositoryWith(List(), List())
       val expenseSheet = OpenExpenseSheet(UUID.randomUUID(), employee, List())
 
-      run(for {
-        _ <- sut.save(expenseSheet)
+      val (result, check) = run(for {
+        result <- sut.save(expenseSheet)
         check <- existExpenseSheet(expenseSheet.id)
-      } yield check) should be(false)
+      } yield (result, check))
+
+      result should be(Left(NonEmptyList(s"Unable to find employee ${employee.id}", List())))
+      check should be(false)
     }
     it("should update an existing expense sheet") {
       val employee = Employee(UUID.randomUUID(), "A", "V")
@@ -87,7 +97,7 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit M:Monad[F])
         _ <- sut.save(updatedExpenseSheet)
         gotExpenseSheet <- sut.get(expenseSheet.id)
       } yield gotExpenseSheet) should matchPattern {
-        case Some(`updatedExpenseSheet`) =>
+        case Right(`updatedExpenseSheet`) =>
       }
     }
   }

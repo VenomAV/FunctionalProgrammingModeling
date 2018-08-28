@@ -13,7 +13,7 @@ sealed trait Claim {
   def expenses: NonEmptyList[Expense]
 }
 
-case class PendingClaim (id: ClaimId, employee: Employee, expenses: NonEmptyList[Expense]) extends Claim
+case class PendingClaim private (id: ClaimId, employee: Employee, expenses: NonEmptyList[Expense]) extends Claim
 
 object Claim {
   type ClaimId = UUID
