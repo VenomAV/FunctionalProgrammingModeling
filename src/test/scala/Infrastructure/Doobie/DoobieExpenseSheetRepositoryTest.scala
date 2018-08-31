@@ -10,6 +10,8 @@ import Infrastructure.ExpenseSheetRepositoryContractTest
 import Infrastructure.Repositories.Doobie.implicits._
 import Infrastructure.Repositories.{DoobieEmployeeRepository, DoobieExpenseSheetRepository}
 import cats.effect.IO
+import cats.instances.list._
+import cats.syntax.traverse._
 import doobie.free.connection.ConnectionIO
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -48,10 +50,10 @@ class DoobieExpenseSheetRepositoryTest extends ExpenseSheetRepositoryContractTes
     employeeIds = employees.map(_.id)
     expenseSheetIds = expenseSheets.map(_.id)
 
-    employees
-      .foreach(employeeRepository.save(_).transact(xa).unsafeRunSync())
-    expenseSheets
-      .foreach(expenseSheetRepository.save(_).transact(xa).unsafeRunSync())
+    employees.traverse(employeeRepository.save(_))
+      .transact(xa).unsafeRunSync()
+    expenseSheets.traverse(expenseSheetRepository.save(_))
+      .transact(xa).unsafeRunSync()
 
     expenseSheetRepository
   }

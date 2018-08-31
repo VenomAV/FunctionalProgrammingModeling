@@ -5,6 +5,8 @@ import Expenses.Repositories.EmployeeRepository
 import Infrastructure.EmployeeRepositoryContractTest
 import Infrastructure.Repositories.DoobieEmployeeRepository
 import cats.effect.IO
+import cats.instances.list._
+import cats.syntax.traverse._
 import doobie.free.connection.ConnectionIO
 import doobie.implicits._
 import doobie.postgres.implicits._
@@ -37,8 +39,8 @@ class DoobieEmployeeRepositoryTest extends EmployeeRepositoryContractTest[Connec
     val employeeRepository = new DoobieEmployeeRepository
 
     employeeIds = employees.map(_.id)
-    employees
-      .foreach(employeeRepository.save(_).transact(xa).unsafeRunSync())
+    employees.traverse(employeeRepository.save(_))
+      .transact(xa).unsafeRunSync()
     employeeRepository
   }
 
