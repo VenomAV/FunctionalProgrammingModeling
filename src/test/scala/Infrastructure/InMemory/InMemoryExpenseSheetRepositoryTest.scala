@@ -1,7 +1,6 @@
 package Infrastructure.InMemory
 
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
-import Expenses.Model.{Employee, ExpenseSheet}
+import Expenses.Model.{Employee, ExpenseSheet, ExpenseSheetId}
 import Expenses.Repositories.ExpenseSheetRepository
 import Expenses.TestUtils.AcceptanceTestUtils.{Test, TestState}
 import Expenses.TestUtils.InMemoryExpenseSheetRepository

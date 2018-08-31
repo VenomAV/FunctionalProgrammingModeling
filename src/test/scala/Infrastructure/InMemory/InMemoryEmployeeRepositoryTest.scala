@@ -1,7 +1,6 @@
 package Infrastructure.InMemory
 
-import Expenses.Model.Employee
-import Expenses.Model.Employee.EmployeeId
+import Expenses.Model.{Employee, EmployeeId}
 import Expenses.Repositories.EmployeeRepository
 import Expenses.TestUtils.AcceptanceTestUtils.{Test, TestState}
 import Expenses.TestUtils.InMemoryEmployeeRepository

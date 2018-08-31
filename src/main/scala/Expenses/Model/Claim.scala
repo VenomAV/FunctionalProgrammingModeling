@@ -2,10 +2,12 @@ package Expenses.Model
 
 import java.util.UUID
 
-import Expenses.Model.Claim.ClaimId
 import Expenses.Utils.ErrorManagement.Validated
 import cats.data.NonEmptyList
 import cats.implicits._
+import Claim.implicits._
+
+sealed case class ClaimId(uuid: UUID)
 
 sealed trait Claim {
   def id: ClaimId
@@ -16,7 +18,11 @@ sealed trait Claim {
 case class PendingClaim private (id: ClaimId, employee: Employee, expenses: NonEmptyList[Expense]) extends Claim
 
 object Claim {
-  type ClaimId = UUID
+  object implicits {
+    import scala.language.implicitConversions
+
+    implicit def uuidToClaimId(uuid: UUID) : ClaimId = ClaimId(uuid)
+  }
 }
 
 object PendingClaim {

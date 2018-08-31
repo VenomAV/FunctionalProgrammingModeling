@@ -1,7 +1,6 @@
 package Expenses.Repositories
 
-import Expenses.Model.ExpenseSheet
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
+import Expenses.Model.{ExpenseSheet, ExpenseSheetId}
 
 trait ExpenseSheetRepository[F[_]] {
   def get(id: ExpenseSheetId) : F[ExpenseSheet]

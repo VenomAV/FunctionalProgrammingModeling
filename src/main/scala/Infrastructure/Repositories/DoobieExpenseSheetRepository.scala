@@ -1,6 +1,5 @@
 package Infrastructure.Repositories
 
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
 import Expenses.Model._
 import Expenses.Repositories.ExpenseSheetRepository
 import Infrastructure.Repositories.Doobie.implicits._

@@ -1,7 +1,6 @@
 package Infrastructure.Doobie
 
-import Expenses.Model.Employee
-import Expenses.Model.Employee.EmployeeId
+import Expenses.Model.{Employee, EmployeeId}
 import Expenses.Repositories.EmployeeRepository
 import Infrastructure.EmployeeRepositoryContractTest
 import Infrastructure.Repositories.DoobieEmployeeRepository

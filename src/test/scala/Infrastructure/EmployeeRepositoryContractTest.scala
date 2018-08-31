@@ -2,12 +2,12 @@ package Infrastructure
 
 import java.util.UUID
 
-import Expenses.Model.Employee
-import Expenses.Model.Employee.EmployeeId
+import Expenses.Model.{Employee, EmployeeId}
 import Expenses.Repositories.EmployeeRepository
 import cats.MonadError
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import Employee.implicits._
 import org.scalatest.{BeforeAndAfterEach, FunSpec, Matchers}
 
 import scala.collection.mutable.ListBuffer
@@ -27,7 +27,7 @@ abstract class EmployeeRepositoryContractTest[F[_]](implicit ME:MonadError[F, Th
       run(sut.get(id)) should be(Right(Employee(id, name, surname)))
     }
     it("should return error when employee is missing") {
-      val id = UUID.randomUUID()
+      val id : EmployeeId = UUID.randomUUID()
       val sut = createRepositoryWith(List())
 
       run(sut.get(id)) should matchPattern {

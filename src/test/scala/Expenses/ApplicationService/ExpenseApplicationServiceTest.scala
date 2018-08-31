@@ -10,6 +10,8 @@ import Expenses.TestUtils._
 import cats.implicits._
 import org.scalatest.{FunSpec, Matchers}
 import squants.market.Money
+import Employee.implicits._
+import ExpenseSheet.implicits._
 
 class ExpenseApplicationServiceTest extends FunSpec with Matchers {
   implicit val er: EmployeeRepository[Test] = new InMemoryEmployeeRepository()
@@ -46,7 +48,7 @@ class ExpenseApplicationServiceTest extends FunSpec with Matchers {
       newState.expenseSheets should be(List(OpenExpenseSheet(expenseSheet.id, employee, List(expense))))
     }
     it("should return error when expense sheet is missing") {
-      val id = UUID.randomUUID()
+      val id : ExpenseSheetId = UUID.randomUUID()
       val result = ExpenseApplicationService.addExpenseTo[Test](expense, id)
         .runA(emptyState())
 

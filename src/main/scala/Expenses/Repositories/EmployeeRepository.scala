@@ -1,7 +1,6 @@
 package Expenses.Repositories
 
-import Expenses.Model.Employee
-import Expenses.Model.Employee.EmployeeId
+import Expenses.Model.{Employee, EmployeeId}
 
 trait EmployeeRepository[F[_]] {
   def get(id: EmployeeId) : F[Employee]

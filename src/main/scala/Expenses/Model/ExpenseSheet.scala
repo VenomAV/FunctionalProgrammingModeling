@@ -2,10 +2,12 @@ package Expenses.Model
 
 import java.util.UUID
 
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
 import Expenses.Utils.ErrorManagement
 import Expenses.Utils.ErrorManagement.Validated
 import cats.implicits._
+import ExpenseSheet.implicits._
+
+sealed case class ExpenseSheetId(uuid: UUID)
 
 sealed trait ExpenseSheet {
   def id: ExpenseSheetId
@@ -22,8 +24,6 @@ case class ClaimedExpenseSheet private (id: ExpenseSheetId,
                                 expenses:List[Expense]) extends ExpenseSheet
 
 object ExpenseSheet {
-  type ExpenseSheetId = UUID
-
   private val validateId = ErrorManagement.notNull[ExpenseSheetId]("id is null")(_)
   private val validateEmployee = ErrorManagement.notNull[Employee]("employee is null")(_)
 
@@ -42,4 +42,10 @@ object ExpenseSheet {
 
   def createClaimed(employee: Employee, expenses:List[Expense]) : Validated[ClaimedExpenseSheet] =
     createClaimed(UUID.randomUUID(), employee, expenses)
+
+  object implicits {
+    import scala.language.implicitConversions
+
+    implicit def uuidToExpenseSheetId(uuid: UUID) : ExpenseSheetId = ExpenseSheetId(uuid)
+  }
 }

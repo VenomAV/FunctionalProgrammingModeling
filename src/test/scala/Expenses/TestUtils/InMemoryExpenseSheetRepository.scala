@@ -1,7 +1,6 @@
 package Expenses.TestUtils
 
-import Expenses.Model.ExpenseSheet
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
+import Expenses.Model.{ExpenseSheet, ExpenseSheetId}
 import Expenses.Repositories.ExpenseSheetRepository
 import Expenses.TestUtils.AcceptanceTestUtils.{OrError, Test, TestState}
 import cats.data.StateT

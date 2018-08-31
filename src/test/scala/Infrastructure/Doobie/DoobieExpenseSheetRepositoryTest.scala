@@ -2,9 +2,9 @@ package Infrastructure.Doobie
 
 import java.util.UUID
 
-import Expenses.Model.Employee.EmployeeId
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
-import Expenses.Model.{Employee, Expense, ExpenseSheet}
+import Expenses.Model.Employee.implicits._
+import Expenses.Model.ExpenseSheet.implicits._
+import Expenses.Model._
 import Expenses.Repositories.ExpenseSheetRepository
 import Infrastructure.ExpenseSheetRepositoryContractTest
 import Infrastructure.Repositories.Doobie.implicits._

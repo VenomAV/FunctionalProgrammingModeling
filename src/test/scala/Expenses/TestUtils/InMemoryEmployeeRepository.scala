@@ -1,7 +1,6 @@
 package Expenses.TestUtils
 
-import Expenses.Model.Employee
-import Expenses.Model.Employee.EmployeeId
+import Expenses.Model.{Employee, EmployeeId}
 import Expenses.Repositories.EmployeeRepository
 import Expenses.TestUtils.AcceptanceTestUtils.{OrError, Test, TestState}
 import cats.data.StateT

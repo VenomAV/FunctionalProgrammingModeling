@@ -38,10 +38,8 @@ object ErrorManagement {
 
   object implicits {
     implicit class ValidationResultToApplicativeError[A](val vr: Validated[A]) extends AnyVal {
-      def orRaiseError[F[_]](implicit AE:ApplicativeError[F, Throwable]): F[A] = vr match {
-        case Valid(x) => AE.pure(x)
-        case Invalid(nel: NonEmptyList[String]) => AE.raiseError(new java.lang.Error(nel.toList.mkString(", ")))
-      }
+      def orRaiseError[F[_]](implicit AE:ApplicativeError[F, Throwable]): F[A] =
+        vr.fold(fe => AE.raiseError(new java.lang.Error(fe.toList.mkString(", "))), AE.pure(_))
     }
   }
 }

@@ -2,8 +2,8 @@ package Infrastructure
 
 import java.util.{Date, UUID}
 
-import Expenses.Model.ExpenseSheet.ExpenseSheetId
 import Expenses.Model._
+import ExpenseSheet.implicits._
 import Expenses.Repositories.ExpenseSheetRepository
 import cats.MonadError
 import cats.syntax.flatMap._
@@ -45,7 +45,7 @@ abstract class ExpenseSheetRepositoryContractTest[F[_]](implicit ME:MonadError[F
       run(sut.get(claimedExpenseSheet.id)) should be(Right(claimedExpenseSheet))
     }
     it("should return left when get a missing expense sheet") {
-      val id = UUID.randomUUID()
+      val id : ExpenseSheetId = UUID.randomUUID()
       val sut = createRepositoryWith(List(), List())
 
       run(sut.get(id)) should matchPattern{
